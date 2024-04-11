@@ -44,7 +44,7 @@ public class JdbcIngredientRepository implements IngredientRepository {
             throws SQLException {
         return new Ingredient(
                 rs.getString("id"),
-                //rs.getString("name"),
+                rs.getString("name"),
                 Ingredient.Type.valueOf(rs.getString("type")));
     }
 }

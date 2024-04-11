@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 
 @Repository
 public class JdbcTacoRepository implements TacoRepository {
@@ -30,6 +31,13 @@ public class JdbcTacoRepository implements TacoRepository {
 //        for (Ingredient ingredient : taco.getIngredients()) {
 //            saveIngredientToTaco(ingredient, tacoId);
 //        }
+
+        Iterator var4 = taco.getIngredients().iterator();
+
+        while(var4.hasNext()) {
+            Ingredient ingredient = (Ingredient)var4.next();
+            this.saveIngredientToTaco(ingredient, tacoId);
+        }
 
         return taco;
     }
@@ -56,6 +64,7 @@ public class JdbcTacoRepository implements TacoRepository {
         jdbc.update(
                 "insert into taco_ingredient (taco, ingredient) " +
                         "values (?, ?)",
-                tacoId, ingredient);
+                tacoId, ingredient.getId());
     }
+
 }

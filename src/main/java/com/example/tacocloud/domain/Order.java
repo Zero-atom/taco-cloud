@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +15,8 @@ public class Order {
 
     private Long id;
     private Date placedAt;
+
+    List<Taco> tacos = new ArrayList<>();
 
     @NotBlank(message = "Необходимо заполнить имя")
     private String name;
@@ -39,7 +43,7 @@ public class Order {
     @Digits(integer = 3, fraction = 0, message = "Некорректный CVV")
     private String ccCVV;
 
-    public List<Taco> getTacos() {
-        return List.of();
+    public void addDesign(Taco taco) {
+        tacos.add(taco);
     }
 }

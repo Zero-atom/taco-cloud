@@ -11,5 +11,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("home");
     }
+    //напрямую связал  "/" с  "home" для примера в HomeCotroller поменять @GetMapping("/1234")
 
 }
