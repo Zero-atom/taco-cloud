@@ -33,7 +33,7 @@ public class Order {
     @NotBlank(message = "Необходимо заполнить индекс")
     private String zip;
 
-    @CreditCardNumber(message = "Некорректный номер карты")
+    //@CreditCardNumber(message = "Некорректный номер карты")
     private String ccNumber;
 
     @Pattern(regexp = "^(0[1-9]|1[0-2])([\\/])([1-9][0-9])$",

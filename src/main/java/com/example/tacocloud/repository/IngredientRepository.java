@@ -9,4 +9,5 @@ public interface IngredientRepository {
 
     Ingredient save(Ingredient ingredient);
 
+    Ingredient findOne(String id);//убрать
 }

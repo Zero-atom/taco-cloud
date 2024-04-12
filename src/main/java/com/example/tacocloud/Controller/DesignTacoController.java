@@ -28,11 +28,9 @@ import java.util.stream.Collectors;
 @SessionAttributes("order")
 public class DesignTacoController {
     private final IngredientRepository ingredientRepo;
-    private TacoRepository designRepo;
+    private final TacoRepository designRepo;
 
-    public DesignTacoController(IngredientRepository ingredientRepo) {
-        this.ingredientRepo = ingredientRepo;
-    }
+
 
     @Autowired
     public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository designRepo) {
@@ -50,41 +48,36 @@ public class DesignTacoController {
         return new Taco();
     }
 
-    @GetMapping
-    public String showDesignForm(Model model) {
+    @ModelAttribute
+    public void addIngredientsToModel(Model model) {
         List<Ingredient> ingredients = new ArrayList<>();
-        ingredientRepo.findAll().forEach(i -> ingredients.add(i));
-//        List<Ingredient> ingredients = Arrays.asList(
-//                new Ingredient("FLTO", "Пшеничная  лепешка", Type.WRAP),
-//                new Ingredient("COTO", "Кукурузная лепешка", Type.WRAP),
-//                new Ingredient("GRBF", "Говядина", Type.PROTEIN),
-//                new Ingredient("CARN", "Свинина", Type.PROTEIN),
-//                new Ingredient("TMTO", "Помидоры", Type.VEGGIES),
-//                new Ingredient("LETC", "Салат", Type.VEGGIES),
-//                new Ingredient("CHED", "Чеддер", Type.CHEESE),
-//                new Ingredient("JACK", "Джек", Type.CHEESE),
-//                new Ingredient("SLSA", "Сальса", Type.SAUCE),
-//                new Ingredient("SRCR", "Сметана", Type.SAUCE)
-//        );
+        ingredientRepo.findAll().forEach(ingredients::add);
+
         Type[] types = Ingredient.Type.values();
         for (Type type : types) {
             model.addAttribute(type.toString().toLowerCase(),
                     filterByType(ingredients, type));
         }
-        //model.addAttribute("design", new Taco());
+    }
+
+    @GetMapping
+    public String showDesignForm(Model model) {
         return "design";
     }
 
     @PostMapping
-    public String processDesign(@Valid Taco design, Errors errors, @ModelAttribute Order order) {
+    public String processDesign(@Valid Taco taco,
+                                @ModelAttribute Order order,
+                                Errors errors)
+    {
         if (errors.hasErrors()) {
             return "design";
         }
 
-        Taco saved = designRepo.save(design);
+        Taco saved = designRepo.save(taco);
         order.addDesign(saved);
 
-        log.info("Обработка дизайна: " + design);
+        log.info("Обработка дизайна: " + taco);
 
         return "redirect:/orders/current";
     }

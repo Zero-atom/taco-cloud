@@ -26,34 +26,44 @@ public class JdbcTacoRepository implements TacoRepository {
 
     @Override
     public Taco save(Taco taco) {
+        //Сохранение основной информации о Taco и получение ее идентификатора
         long tacoId = saveTacoInfo(taco);
         taco.setId(tacoId);
-//        for (Ingredient ingredient : taco.getIngredients()) {
-//            saveIngredientToTaco(ingredient, tacoId);
-//        }
 
-        Iterator var4 = taco.getIngredients().iterator();
-
-        while(var4.hasNext()) {
-            Ingredient ingredient = (Ingredient)var4.next();
-            this.saveIngredientToTaco(ingredient, tacoId);
+        for (Ingredient ingredient : taco.getIngredients()) {
+            saveIngredientToTaco(ingredient, tacoId);
         }
+
+//        Iterator var4 = taco.getIngredients().iterator();
+
+
+//        while(var4.hasNext()) {
+//            System.out.println(var4);
+//            Ingredient ingredient = (Ingredient)var4.next();
+//            this.saveIngredientToTaco(ingredient, tacoId);
+//        }
 
         return taco;
     }
 
     private long saveTacoInfo(Taco taco) {
+        // Устанавливаем текущее время создания Taco
         taco.setCreatedAt(new Date());
 
+        // Создаем фабрику для создания PreparedStatementCreator
         PreparedStatementCreatorFactory creatorFactory = new PreparedStatementCreatorFactory(
                 "insert into taco (name, createdAt) values (?, ?)",
                 Types.VARCHAR, Types.TIMESTAMP
         );
+        // Устанавливаем флаг, чтобы получить сгенерированные ключи после выполнения запроса
         creatorFactory.setReturnGeneratedKeys(true);
+
+        // Создаем PreparedStatementCreator с параметрами имени Taco и времени создания
         PreparedStatementCreator psc = creatorFactory.newPreparedStatementCreator(
+                // Передаем в качестве параметров имя Taco и время создания, преобразованное в Timestamp
                 Arrays.asList(taco.getName(), new Timestamp(taco.getCreatedAt().getTime())));
 
-
+        // Создаем объект для хранения сгенерированных ключей
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(psc, keyHolder);
 
@@ -64,7 +74,7 @@ public class JdbcTacoRepository implements TacoRepository {
         jdbc.update(
                 "insert into taco_ingredient (taco, ingredient) " +
                         "values (?, ?)",
-                tacoId, ingredient.getId());
+                Long.valueOf(tacoId), ingredient.getId());
     }
 
 }
