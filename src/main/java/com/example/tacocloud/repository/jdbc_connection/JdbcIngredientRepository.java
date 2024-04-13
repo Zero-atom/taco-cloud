@@ -1,4 +1,4 @@
-package com.example.tacocloud.repository;
+package com.example.tacocloud.repository.jdbc_connection;
 
 import com.example.tacocloud.domain.Ingredient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
-public class JdbcIngredientRepository implements IngredientRepository {
+public class JdbcIngredientRepository {
 
     private JdbcTemplate jdbc;
 
@@ -18,12 +18,12 @@ public class JdbcIngredientRepository implements IngredientRepository {
         this.jdbc = jdbc;
     }
 
-    @Override
+
     public Iterable<Ingredient> findAll() {
         return jdbc.query("select id, name, type from ingredient", this::mapRowToIngredient);
     }
 
-    @Override
+
     public Ingredient findOne(String id) {//убрать
         return jdbc.queryForObject(
                 "select id, name, type from Ingredient where id=?",
@@ -31,14 +31,14 @@ public class JdbcIngredientRepository implements IngredientRepository {
         );
     }
 
-    @Override
+
     public Ingredient findById(String id) {
         return jdbc.queryForObject(
                 "select id, name, type from ingredient where id=?",
                 this::mapRowToIngredient, id);
     }
 
-    @Override
+
     public Ingredient save(Ingredient ingredient) {
         jdbc.update(
                 "insert into ingredient (id, name, type) values (?, ?, ?)",

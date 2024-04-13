@@ -1,4 +1,4 @@
-package com.example.tacocloud.repository;
+package com.example.tacocloud.repository.jdbc_connection;
 
 import com.example.tacocloud.domain.Ingredient;
 import com.example.tacocloud.domain.Taco;
@@ -13,10 +13,9 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 
 @Repository
-public class JdbcTacoRepository implements TacoRepository {
+public class JdbcTacoRepository {
 
     private JdbcTemplate jdbc;
 
@@ -24,7 +23,7 @@ public class JdbcTacoRepository implements TacoRepository {
         this.jdbc = jdbc;
     }
 
-    @Override
+
     public Taco save(Taco taco) {
         //Сохранение основной информации о Taco и получение ее идентификатора
         long tacoId = saveTacoInfo(taco);

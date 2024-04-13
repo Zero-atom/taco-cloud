@@ -1,4 +1,4 @@
-package com.example.tacocloud.repository;
+package com.example.tacocloud.repository.jdbc_connection;
 
 import com.example.tacocloud.domain.Order;
 import com.example.tacocloud.domain.Taco;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class JdbcOrderRepository implements OrderRepository {
+public class JdbcOrderRepository {
 
     private SimpleJdbcInsert orderInserter;
     private SimpleJdbcInsert orderTacoInserter;
@@ -32,7 +32,7 @@ public class JdbcOrderRepository implements OrderRepository {
         this.objectMapper = new ObjectMapper();
     }
 
-    @Override
+
     public Order save(Order order) {
         order.setPlacedAt(new Date());
 

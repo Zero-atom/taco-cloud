@@ -6,36 +6,32 @@ import com.example.tacocloud.domain.Taco;
 import com.example.tacocloud.repository.IngredientRepository;
 import com.example.tacocloud.repository.TacoRepository;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import com.example.tacocloud.domain.Ingredient.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Slf4j
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("order")
 public class DesignTacoController {
+
     private final IngredientRepository ingredientRepo;
-    private final TacoRepository designRepo;
 
-
+    private final TacoRepository tacoRepository;
 
     @Autowired
-    public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository designRepo) {
+    public DesignTacoController(IngredientRepository ingredientRepo,
+                                TacoRepository tacoRepository) {
         this.ingredientRepo = ingredientRepo;
-        this.designRepo = designRepo;
+        this.tacoRepository = tacoRepository;
     }
 
     @ModelAttribute(name = "order")
@@ -61,35 +57,29 @@ public class DesignTacoController {
     }
 
     @GetMapping
-    public String showDesignForm(Model model) {
+    public String showDesignForm() {
         return "design";
     }
 
     @PostMapping
-    public String processDesign(@Valid Taco taco,
-                                @ModelAttribute Order order,
-                                Errors errors)
-    {
+    private String processDesign(
+            @Valid @ModelAttribute("taco") Taco taco,
+            Errors errors,
+            @ModelAttribute("order") Order order) {
+
         if (errors.hasErrors()) {
             return "design";
         }
 
-        Taco saved = designRepo.save(taco);
+        Taco saved = tacoRepository.save(taco);
         order.addDesign(saved);
-
-        log.info("Обработка дизайна: " + taco);
-
         return "redirect:/orders/current";
     }
 
-    private List<Ingredient> filterByType(List<Ingredient> ingredients, Ingredient.Type type) {
-        List<Ingredient> filteredIngredients = new ArrayList<>();
-        for (Ingredient ingredient : ingredients) {
-            if (ingredient.getType() == type) {
-                filteredIngredients.add(ingredient);
-            }
-        }
-        return filteredIngredients;
+    private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
+        return ingredients.stream()
+                .filter(x -> x.getType().equals(type))
+                .collect(Collectors.toList());
     }
 }
 

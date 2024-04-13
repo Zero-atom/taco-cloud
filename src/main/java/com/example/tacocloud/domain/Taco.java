@@ -12,16 +12,27 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@Entity
+@Table(name = "Taco")
 public class Taco {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Date createdAt;
 
     @NotNull
     @Size(min = 5, message = "Минимальная длина имени - 5 символов ")
     private String name;
-    @Size(min = 1, message = "Должен быть выбран хотя бы один ингредиент")
+
+    @ManyToMany(targetEntity = Ingredient.class)
+    @NotNull(message = "You must choose at least 1 ingredient")
+    @Size(min = 1, message = "You must choose at least 1 ingredient")
     private List<Ingredient> ingredients;
+
+    @PrePersist
+    void createdAt() {
+        this.createdAt = new Date();
+    }
+
+    private Date createdAt;
 }
-
-
